@@ -1,0 +1,51 @@
+# common-dev.yml
+server:
+  port: 8080 # 编排value覆盖
+  shutdown: graceful
+  servlet:
+    context-path: /violet
+
+management:
+  server:
+    port: 8081 # 编排value覆盖
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: trace
+
+spring:
+  datasource:
+    driver-class-name:
+    url:
+    username:
+    password:
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+
+
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    generate-ddl: false
+    database: oracle
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+        dialect: org.hibernate.dialect.Oracle10gDialect
+        temp:
+          use_jdbc_metadata_defaults: false
+
+

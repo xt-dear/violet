@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="LOGS" value="/opt/applog" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+    <appender name="RollingFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/logs.json</file>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>CST</timeZone>
+                </timestamp>
+            </providers>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/logs-%d{yyyy-MM-dd}_%i.json</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <!-- 不需要配置日志清理策略，在宿主机上有专门的清理程序清理
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+            -->
+        </rollingPolicy>
+    </appender>
+
+    <appender name="BusinessFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/business/logs.json</file>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>CST</timeZone>
+                </timestamp>
+            </providers>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/business/logs-%d{yyyy-MM-dd}.json</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="test,prod,mock">
+        <root level="info">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="RollingFile" />
+        </root>
+
+        <logger name="com.violet" additivity="false" level="info">
+            <appender-ref ref="BusinessFile" />
+            <appender-ref ref="RollingFile" />
+        </logger>
+    </springProfile>
+
+    <springProfile name="dev">
+        <root level="info">
+            <appender-ref ref="STDOUT" />
+        </root>
+    </springProfile>
+
+</configuration>
